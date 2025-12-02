@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Quiz: Premium Design (39 Questions)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS cho thiết kế chuyên nghiệp và hiện đại */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .quiz-container {
+            background-color: #ffffff;
+            padding: 40px 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 750px;
+            transition: all 0.5s;
+            animation: fadeIn 1s ease-out;
+        }
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 2.2em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        #quiz-status {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 25px;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+        }
+        #timer-bar-container {
+            height: 12px;
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        #timer-bar {
+            height: 100%;
+            width: 100%;
+            background-color: #28a745;
+            border-radius: 6px;
+            transition: width 1s linear, background-color 0.5s;
+        }
+        .question-box {
+            padding: 25px;
+            border-radius: 12px;
+            background-color: #f0f8ff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        .question-box p {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            color: #1e3c72;
+        }
+        .options label {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+            padding: 16px 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            font-size: 1.1em;
+            font-weight: 500;
+            border: 1px solid #ddd;
+        }
+        .options label:hover:not(.disabled) {
+            background-color: #f7f7f7;
+            transform: scale(1.01);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .options input[type="radio"] {
+            display: none;
+        }
+        .options label.correct {
+            background-color: #d4edda !important;
+            color: #155724;
+            border: 2px solid #28a745;
+            box-shadow: 0 0 15px rgba(40, 167, 69, 0.5);
+            animation: pulse 1s ease-out;
+        }
+        .options label.incorrect {
+            background-color: #f8d7da !important;
+            color: #721c24;
+            border: 2px solid #dc3545;
+            box-shadow: 0 0 15px rgba(220, 53, 69, 0.5);
+        }
+        .options label.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .action-area {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .action-button {
+            flex-grow: 1;
+            padding: 15px;
+            font-size: 1.1em;
+            font-weight: 700;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        #check-btn { background-color: #007bff; }
+        #check-btn:hover:not(:disabled) { background-color: #0056b3; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4); }
+        #next-btn { background-color: #28a745; display: none; }
+        #next-btn:hover:not(:disabled) { background-color: #218838; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4); }
+        .action-button:disabled { background-color: #adb5bd; cursor: not-allowed; }
+        #feedback {
+            margin-top: 25px; padding: 18px; border-radius: 10px; font-weight: 600;
+            text-align: center; font-size: 1.2em; border: 2px solid transparent; min-height: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .correct-feedback { background-color: #e6ffec; color: #155724; border-color: #28a745; }
+        .incorrect-feedback { background-color: #fff0f3; color: #721c24; border-color: #dc3545; }
+        .modal { background-color: rgba(0, 0, 0, 0.8); }
+        .modal-content {
+            background-color: #ffffff; padding: 60px; border-radius: 15px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7); animation: bounceIn 0.8s;
+        }
+        #restart-btn {
+            background-color: #ffc107; padding: 15px 30px; font-size: 1.2em;
+        }
+        #restart-btn:hover { background-color: #e0a800; transform: translateY(-2px); }
+        .hidden { display: none; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.01); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1>Master Quiz Challenge 💡</h1>
+    
+    <div id="timer-bar-container"><div id="timer-bar"></div></div>
+
+    <div id="quiz-status">
+        Question <span id="current-q-number">1</span> of 39 | Score: <span id="current-score">0</span>
+    </div>
+
+    <div id="quiz-area">
+        <div id="quiz-question"></div>
+
+        <div id="feedback" class="hidden"></div>
+        
+        <div class="action-area">
+            <button id="check-btn" class="action-button" onclick="checkAnswer()">Submit Answer</button>
+            <button id="next-btn" class="action-button" onclick="nextQuestion()">Next Question</button>
+        </div>
+    </div>
+</div>
+
+<div id="results-modal" class="modal hidden">
+    <div class="modal-content">
+        <h2 id="modal-title"></h2>
+        <p id="final-score"></p>
+        <button id="restart-btn" onclick="location.reload()">Restart Quiz</button>
+    </div>
+</div>
+
+<script>
+    const rawQuizData = [
+        // Dữ liệu 39 câu hỏi đã được tổng hợp
+        { question: "I laughed a lot because the movie was ____.", options: ["funny", "excited", "frightening", "boring"], correctAnswer: "funny" },
+        { question: "Please remember to ____ your hand during the test if you have a question.", options: ["to raise", "raise", "raising", "to rising"], correctAnswer: "to raise" },
+        { question: "My brothers are working ____ for the exam.", options: ["hard", "hardly", "more hard", "hardness"], correctAnswer: "hard" },
+        { question: "The quiet and ____ atmosphere there calm them down.", options: ["peaceful", "polluted", "dirty", "noisy"], correctAnswer: "peaceful" },
+        { question: "When she was at university, my mum did a ____ in Literature.", options: ["degree", "subject", "study", "certificate"], correctAnswer: "degree" },
+        { question: "They wanted to buy a drink, but the machine was out of ____.", options: ["order", "position", "operation", "work"], correctAnswer: "order" },
+        { question: "Participants any special equipment as ____ be provided.", options: ["needn't", "have to", "should", "mustn't"], correctAnswer: "needn't" },
+        { question: "They are laughing most of ____ at the time.", options: ["comedy", "science fiction", "documentary", "soap opera"], correctAnswer: "comedy" },
+        { question: "My boyfriend fell over in front of everyone at dinner, ____ it was so.", options: ["embarrassing", "science fiction", "frightening", "frightened"], correctAnswer: "embarrassing" },
+        { question: "How about ____ to the theatre tonight?", options: ["going", "to go", "go", "to going"], correctAnswer: "going" },
+        { question: "If the company hadn't marketed its new product, few people would have known about ____.", options: ["the few", "a few", "a lot of", "many"], correctAnswer: "the few" },
+        { question: "\"I finally got all the books on the shelves.\" - \"Look out! The ones (số nhiều) on the top ____.\"", options: ["are going to fall", "are falling", "will fall", "is going to fall"], correctAnswer: "are going to fall" },
+        { question: "My father is not good at all at ____ any kind of sports.", options: ["at", "on", "with", "for"], correctAnswer: "at" },
+        { question: "What's the weather ____ for tomorrow?", options: ["forecast", "storm", "like", "lightning"], correctAnswer: "forecast" },
+        { question: "He has been coughing a lot lately. He ____ smoke so much.", options: ["shouldn't", "can't", "needn't", "don't have to"], correctAnswer: "shouldn't" },
+        { question: "I love the peace and ____ of the countryside.", options: ["quiet", "silent", "quite", "safe"], correctAnswer: "quiet" },
+        { question: "You don't have to pay for delivery, It is free of ____.", options: ["charge", "cost", "fee", "payment"], correctAnswer: "charge" },
+        { question: "Her brother has a lot of free time and wants to know how ____ to it.", options: ["spend", "waste", "save", "make"], correctAnswer: "spend" },
+        { question: "My sister loves ____ shopping with her boyfriend.", options: ["going", "go", "goes", "to go"], correctAnswer: "going" },
+        { question: "John was having lunch when the phone ____.", options: ["rang", "rung", "was ringing", "is ringing"], correctAnswer: "rang" },
+        { question: "His parents never allowed him ____.", options: ["to smoke", "smoking", "smoke", "smokes"], correctAnswer: "to smoke" },
+        { question: "Alice ____ swimming with his father when she was young.", options: ["used to go", "used to going", "is used to going", "use to go"], correctAnswer: "used to go" },
+        { question: "He can speak Chinese well, ____.", options: ["much", "little", "a lot", "some"], correctAnswer: "much" },
+        { question: "Sarah refused to take ____ in the English speaking contest.", options: ["part", "notice", "place", "leave"], correctAnswer: "part" },
+        { question: "There ____ available in this area of specialized skills.", options: ["aren't a lot of jobs", "isn't a lot of jobs", "isn't a lot of job", "aren't a lot of job"], correctAnswer: "aren't a lot of jobs" },
+        { question: "This is a different dictionary ____ the one I borrowed yesterday.", options: ["from", "with", "like", "as"], correctAnswer: "from" },
+        { question: "When it started to rain, Mary ____ her raincoat.", options: ["put on", "put off", "took out", "took off"], correctAnswer: "put on" },
+        { question: "To request more ____ about any of our products and services, please visit our website.", options: ["information", "news", "brochure", "equipment"], correctAnswer: "information" },
+        { question: "There's lots of night-life in Ho Chi Minh city. It's one of the most ____ cities in Vietnam.", options: ["exciting", "polluted", "excited", "quiet"], correctAnswer: "exciting" },
+        { question: "Don't ____ until tomorrow what you can do today.", options: ["put off", "put on", "put out", "put up with"], correctAnswer: "put off" },
+        { question: "Although younger than the other children, she ____ in the demanded game.", options: ["to be included", "including", "to include", "include"], correctAnswer: "to be included" },
+        { question: "Physics ____ not an easy subject for everybody.", options: ["is", "are", "does", "will"], correctAnswer: "is" },
+        { question: "He sometimes think about his friends in Singapore. He will be ____.", options: ["visiting", "visit", "to visit", "to visiting"], correctAnswer: "visiting" },
+        { question: "Let's go for a swim as soon as we ____ the hotel.", options: ["reach", "get", "arrive", "come"], correctAnswer: "reach" },
+        { question: "It's important to have a sense of ____ or it's easy to get depressed.", options: ["humour", "amusement", "comedy", "laughter"], correctAnswer: "humour" },
+        { question: "A ____ is an object that helps you remember a place you have visited.", options: ["souvenir", "diary", "memory", "gift"], correctAnswer: "souvenir" },
+        { question: "If you want to see the doctor, it's best to make ____ with him.", options: ["an appointment", "an interview", "a date", "a meeting"], correctAnswer: "an appointment" },
+        { question: "Mary is only six, and at that age she can't ____ much.", options: ["at", "on", "in", "by"], correctAnswer: "at" },
+        { question: "The speaker said nothing worth listening to, ____.", options: ["almost", "complete", "especially", "quite"], correctAnswer: "almost" },
+        { question: "If you park your car in the wrong place, you have to pay a ____.", options: ["ticket", "fee", "money", "fare"], correctAnswer: "ticket" },
+        { question: "Tom was a bit ____ with his test results - He will have to work harder next time!", options: ["disappointed", "worried", "excited", "nervous"], correctAnswer: "disappointed" },
+        { question: "Mr. White is doing very well in his job and expects to ____ over $250,000 next year.", options: ["earn", "worth", "income", "salary"], correctAnswer: "earn" },
+        { question: "The train from Ho Chi Minh city will arrive ____ Hanoi in ten minutes.", options: ["in", "before", "around", "at"], correctAnswer: "in" },
+        { question: "The examiner made us ____ our identification in order to be admitted to the test center.", options: ["show", "to show", "showing", "showed"], correctAnswer: "show" },
+        { question: "To relieve work-related stress, our company provides free ____ for everyone.", options: ["massages", "drugs", "messages", "sleep"], correctAnswer: "massages" },
+        { question: "Mr. Pike ____ for this company for more than thirty years, and he intends to stay here until he ____.", options: ["has worked / retires", "works / is retiring", "worked / retires", "is working / will retire"], correctAnswer: "has worked / retires" },
+        { question: "There ____ mutual understanding between friends.", options: ["must be", "must to be", "are", "must have been"], correctAnswer: "must be" },
+        { question: "He walked ____ I could not catch up with him.", options: ["so fast that", "fast", "as fast as", "faster than"], correctAnswer: "so fast that" },
+        { question: "It is necessary ____ to protect our environment.", options: ["to do", "do", "did", "have done"], correctAnswer: "to do" },
+        { question: "The more ____ you are, the easier it is for you to make friends.", options: ["sociable", "reserved", "funny", "social"], correctAnswer: "sociable" },
+        { question: "I can ____ with most things but I cannot stand noisy children.", options: ["put up", "put on", "put aside", "put off"], correctAnswer: "put up" },
+        { question: "My sister and I have a lot in ____. We like and dislike the same things.", options: ["common", "the same", "similarity", "agreement"], correctAnswer: "common" }
+    ];
+
+    const TIME_LIMIT = 30; // 30 seconds limit
+
+    let quizData = []; 
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let answered = false;
+    let timerInterval;
+    
+    // DOM Elements
+    const quizQuestionDiv = document.getElementById('quiz-question');
+    const statusNumber = document.getElementById('current-q-number');
+    const statusScore = document.getElementById('current-score');
+    const checkBtn = document.getElementById('check-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const feedbackDiv = document.getElementById('feedback');
+    const resultsModal = document.getElementById('results-modal');
+    const finalScoreDisplay = document.getElementById('final-score');
+    const timerBar = document.getElementById('timer-bar');
+
+    // Function to shuffle an array (Fisher-Yates)
+    function shuffle(array) {
+      let currentIndex = array.length, randomIndex;
+      while (currentIndex != 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [
+          array[randomIndex], array[currentIndex]];
+      }
+      return array;
+    }
+
+    // Function to initialize and shuffle the quiz data
+    function buildQuiz() {
+        quizData = shuffle([...rawQuizData]); 
+        loadQuestion();
+    }
+    
+    // Timer functions
+    function startTimer() {
+        let timeLeft = TIME_LIMIT;
+        timerBar.style.width = '100%';
+        timerBar.style.backgroundColor = '#28a745';
+
+        clearInterval(timerInterval);
+
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            const percentage = (timeLeft / TIME_LIMIT) * 100;
+            timerBar.style.width = percentage + '%';
+
+            if (percentage < 33) { timerBar.style.backgroundColor = '#ffc107'; }
+            if (percentage < 10) { timerBar.style.backgroundColor = '#dc3545'; }
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                if (!answered) { checkAnswer(true); } 
+            }
+        }, 1000);
+    }
+
+    // Function to load the current question
+    function loadQuestion() {
+        if (currentQuestionIndex >= quizData.length) {
+            showResults();
+            return;
+        }
+
+        const data = quizData[currentQuestionIndex];
+        const shuffledOptions = shuffle([...data.options]);
+        
+        statusNumber.textContent = currentQuestionIndex + 1;
+        statusScore.textContent = score;
+
+        feedbackDiv.classList.add('hidden');
+        feedbackDiv.className = '';
+        checkBtn.style.display = 'block';
+        nextBtn.style.display = 'none';
+        answered = false;
+
+        let optionsHtml = '<div class="options">';
+        shuffledOptions.forEach((option, optionIndex) => {
+            const uniqueId = `q${currentQuestionIndex}-opt${optionIndex}`; 
+            
+            optionsHtml += `
+                <label for="${uniqueId}">
+                    <input type="radio" id="${uniqueId}" name="q${currentQuestionIndex}" value="${option}">
+                    ${option}
+                </label>
+            `;
+        });
+        optionsHtml += '</div>';
+
+        quizQuestionDiv.innerHTML = `
+            <div class="question-box">
+                <p>${currentQuestionIndex + 1}. ${data.question}</p>
+                ${optionsHtml}
+            </div>
+        `;
+        
+        quizQuestionDiv.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const optionsDiv = radio.closest('.options');
+                optionsDiv.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+                radio.parentElement.classList.add('selected');
+                checkBtn.disabled = false;
+            });
+        });
+
+        checkBtn.disabled = true;
+        startTimer();
+    }
+
+    // Function to check the answer
+    function checkAnswer(timedOut = false) {
+        if (answered) return;
+        clearInterval(timerInterval); 
+
+        const data = quizData[currentQuestionIndex];
+        const questionName = `q${currentQuestionIndex}`;
+        const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
+        const optionsDiv = quizQuestionDiv.querySelector('.options');
+        
+        answered = true;
+
+        optionsDiv.querySelectorAll('input').forEach(input => input.disabled = true);
+        optionsDiv.querySelectorAll('label').forEach(label => label.classList.add('disabled'));
+        checkBtn.disabled = true;
+
+        if (!selectedOption || timedOut) {
+            const feedbackText = timedOut ? "⏱️ Time's up! You did not answer." : "Please select an answer first!";
+            
+            if (timedOut) {
+                 feedbackDiv.textContent = feedbackText + ` The correct answer was: ${data.correctAnswer}.`;
+                 feedbackDiv.className = 'incorrect-feedback';
+                 
+                 optionsDiv.querySelectorAll('label').forEach(l => {
+                    const input = l.querySelector('input');
+                    if (input && input.value === data.correctAnswer) {
+                        l.classList.add('correct');
+                    }
+                });
+            } else {
+                answered = false;
+                alert(feedbackText);
+                startTimer();
+                return;
+            }
+        } else {
+            const answer = selectedOption.value;
+            if (answer === data.correctAnswer) {
+                score++;
+                selectedOption.parentElement.classList.add('correct');
+                feedbackDiv.textContent = "✅ Correct! Well done.";
+                feedbackDiv.className = 'correct-feedback';
+            } else {
+                selectedOption.parentElement.classList.add('incorrect');
+                
+                optionsDiv.querySelectorAll('label').forEach(l => {
+                    const input = l.querySelector('input');
+                    if (input && input.value === data.correctAnswer) {
+                        l.classList.add('correct');
+                    }
+                });
+
+                feedbackDiv.textContent = `❌ Incorrect. The correct answer was: ${data.correctAnswer}.`;
+                feedbackDiv.className = 'incorrect-feedback';
+            }
+        }
+        
+        statusScore.textContent = score;
+        feedbackDiv.classList.remove('hidden');
+        checkBtn.style.display = 'none';
+        nextBtn.style.display = 'block';
+    }
+
+    // Function to move to the next question
+    function nextQuestion() {
+        currentQuestionIndex++;
+        loadQuestion();
+    }
+    
+    // Function to show final results
+    function showResults() {
+        clearInterval(timerInterval);
+        const totalQuestions = quizData.length;
+        const percentage = ((score / totalQuestions) * 100).toFixed(1);
+        
+        let modalTitle = '🎉 Quiz Completed!';
+        if (score === totalQuestions) {
+            modalTitle = '🌟 Perfect Score! Congratulations!';
+        } else if (score >= totalQuestions * 0.8) {
+            modalTitle = '👍 Excellent Result!';
+        }
+
+        document.getElementById('modal-title').textContent = modalTitle;
+        finalScoreDisplay.innerHTML = `You have completed the quiz.<br>Final Score: <strong>${score} / ${totalQuestions}</strong> (${percentage}%)`;
+        
+        document.getElementById('quiz-area').classList.add('hidden');
+        document.getElementById('quiz-status').classList.add('hidden');
+        document.getElementById('timer-bar-container').classList.add('hidden');
+        
+        resultsModal.classList.remove('hidden');
+    }
+
+    // Initialize the quiz
+    buildQuiz();
+</script>
+
+</body>
+</html>
